@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface UserDao {
     List<User> selectUsers();
-    Optional<User> selectUserById();
+    Optional<User> selectUserById(Integer id);
     Integer insertUser(User user);
     Integer deleteUser(Integer id);
 
