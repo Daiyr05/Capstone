@@ -32,21 +32,35 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(
-                        req->req.requestMatchers("/login/**","/register/**", "/refresh_token/**")
-                                .permitAll()
-                                .requestMatchers("/api/**").authenticated()
-                                .anyRequest()
-                                .authenticated()
-                ).userDetailsService(userDetailsServiceImp)
-                .sessionManagement(session->session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/perform_login")
+                        .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                )
+                .userDetailsService(userDetailsServiceImp)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                );
+
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

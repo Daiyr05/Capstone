@@ -22,7 +22,6 @@ public class UserController {
         return userService.selectUsers();
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('CLIENT')")
     public ResponseEntity<User> getAllUsers(@PathVariable Integer id) {
         return userService.selectUserById(id)
                 .map(ResponseEntity::ok)
@@ -30,11 +29,11 @@ public class UserController {
     }
 
     @PostMapping
-    public void addMovie(@RequestBody User user) {
+    public void addUser(@RequestBody User user) {
         userService.insertUser(user);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
