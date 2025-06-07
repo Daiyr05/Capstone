@@ -1,6 +1,7 @@
 package org.example.capstoneproject.repository;
 
 import org.example.capstoneproject.dao.UserDao;
+import org.example.capstoneproject.entity.Role;
 import org.example.capstoneproject.entity.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,32 +21,41 @@ public class UserRepository implements UserDao {
     @Override
     public List<User> selectUsers() {
         var sql = """
-                SELECT * FROM users;
-                """;
-        return jdbcTemplate.query(sql,(resultSet,i)->{
-            return new User(resultSet.getInt("id"),
-                            resultSet.getString("name"),
-                            resultSet.getString("email"),
-                            resultSet.getString("password"),
-                            resultSet.getInt("role_id"));
+            SELECT u.id, u.name, u.email, u.password, r.id AS role_id, r.name AS role_name
+            FROM users u
+            JOIN roles r ON u.role_id = r.id;
+            """;
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
+            Role role = new Role(resultSet.getInt("role_id"), resultSet.getString("role_name"));
+            return new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("email"),
+                    resultSet.getString("password"),
+                    role
+            );
         });
     }
 
     @Override
     public Optional<User> selectUserById(Integer id) {
         var sql = """
-                SELECT * FROM users WHERE id = ?; 
-                """;
+            SELECT u.id, u.name, u.email, u.password, r.id AS role_id, r.name AS role_name
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.id = ?;
+            """;
         try {
-            User user = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) ->
-                    new User(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getString("email"),
-                            rs.getString("password"),
-                            rs.getInt("role_id")
-                    )
-            );
+            User user = jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+                Role role = new Role(rs.getInt("role_id"), rs.getString("role_name"));
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        role
+                );
+            });
             return Optional.of(user);
         } catch (Exception e) {
             return Optional.empty();

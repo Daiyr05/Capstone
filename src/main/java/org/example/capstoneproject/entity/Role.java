@@ -5,10 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class User {
+public class Role {
     private Integer id;
     private String name;
-    private String email;
-    private String password;
-    private Role role;
 }
