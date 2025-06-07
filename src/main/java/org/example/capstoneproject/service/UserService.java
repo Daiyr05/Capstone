@@ -49,4 +49,8 @@ public class UserService {
             throw new NotFoundException(String.format("Movie with id %s not found", user.getId()));
         });
     }
+
+    public List<User> getAllClients() {
+        return userRepository.selectClients();
+    }
 }

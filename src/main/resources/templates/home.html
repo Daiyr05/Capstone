@@ -1,13 +1,45 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen">
-<div class="text-center">
-    <h1 class="text-3xl font-bold text-green-700 mb-4">Welcome!</h1>
-    <a th:href="@{/logout}" class="text-blue-500 hover:underline">Logout</a>
+<body class="p-8 bg-gray-100 min-h-screen relative">
+
+<!-- Logout Button (top-right) -->
+<form th:action="@{/logout}" method="post" class="absolute top-4 right-4">
+    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+        Logout
+    </button>
+</form>
+
+<!-- Admin view: cards for clients -->
+<div sec:authorize="hasAuthority('ADMIN')">
+    <h2 class="text-3xl font-bold mb-6">Clients List</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <a th:each="client : ${clients}"
+           th:href="@{/admin/client/{id}(id=${client.id})}"
+           class="block bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+            <h3 class="text-xl font-semibold mb-2" th:text="${client.name}">Client Name</h3>
+            <p class="text-gray-600 mb-1"><strong>Email:</strong> <span th:text="${client.email}">email@example.com</span></p>
+            <p class="text-gray-500 text-sm">ID: <span th:text="${client.id}">1</span></p>
+        </a>
+    </div>
 </div>
+
+<!-- Client view: cards for tasks -->
+<div sec:authorize="!hasAuthority('ADMIN')">
+    <h2 class="text-3xl font-bold mb-6">Your Tasks</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div th:each="task : ${tasks}"
+             class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+            <h3 class="text-xl font-semibold mb-2" th:text="${task.title}">Task Title</h3>
+            <p class="text-gray-600 mb-1">Status: <span th:text="${task.status}">Pending</span></p>
+            <p class="text-gray-500 text-sm">Due: <span th:text="${#dates.format(task.dueDate, 'yyyy-MM-dd')}">2025-01-01</span></p>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

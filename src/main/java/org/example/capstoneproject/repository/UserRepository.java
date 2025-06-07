@@ -118,4 +118,24 @@ public class UserRepository implements UserDao {
             return Optional.empty();
         }
     }
+
+    public List<User> selectClients() {
+        var sql = """
+    SELECT u.id, u.name, u.email, u.password, r.id AS role_id, r.name AS role_name
+    FROM users u
+    JOIN roles r ON u.role_id = r.id
+    WHERE r.id = 2;
+    """;
+
+        return jdbcTemplate.query(sql, (resultSet, i) -> {
+            Role role = new Role(resultSet.getInt("role_id"), resultSet.getString("role_name"));
+            return new User(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"),
+                    resultSet.getString("email"),
+                    resultSet.getString("password"),
+                    role
+            );
+        });
+    }
 }
