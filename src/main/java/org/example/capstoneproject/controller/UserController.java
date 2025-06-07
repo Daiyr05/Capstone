@@ -3,6 +3,7 @@ package org.example.capstoneproject.controller;
 import org.example.capstoneproject.entity.User;
 import org.example.capstoneproject.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class UserController {
         return userService.selectUsers();
     }
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('CLIENT')")
     public ResponseEntity<User> getAllUsers(@PathVariable Integer id) {
         return userService.selectUserById(id)
                 .map(ResponseEntity::ok)
@@ -32,7 +34,8 @@ public class UserController {
         userService.insertUser(user);
     }
 
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("{id}")
     public void deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
     }

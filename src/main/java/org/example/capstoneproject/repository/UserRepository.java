@@ -5,9 +5,9 @@ import org.example.capstoneproject.entity.Role;
 import org.example.capstoneproject.entity.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public class UserRepository implements UserDao {
 
@@ -92,5 +92,30 @@ public class UserRepository implements UserDao {
                 user.getPassword(),
                 user.getId()
         );
+    }
+
+
+    public Optional<User> selectUserByEmail(String email) {
+        var sql = """
+            SELECT u.id, u.name, u.email, u.password, r.id AS role_id, r.name AS role_name
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.email = ?;
+            """;
+        try {
+            User user = jdbcTemplate.queryForObject(sql, new Object[]{email}, (rs, rowNum) -> {
+                Role role = new Role(rs.getInt("role_id"), rs.getString("role_name"));
+                return new User(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getString("email"),
+                        rs.getString("password"),
+                        role
+                );
+            });
+            return Optional.of(user);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }
