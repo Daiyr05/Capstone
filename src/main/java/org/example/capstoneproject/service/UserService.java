@@ -53,4 +53,8 @@ public class UserService {
     public List<User> getAllClients() {
         return userRepository.selectClients();
     }
+
+    public User selectUserByEmail(String email){
+        return userRepository.selectUserByEmail(email).get();
+    }
 }

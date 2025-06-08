@@ -42,6 +42,7 @@ public class AdminController {
     public String addTaskToClient(@PathVariable int id, @ModelAttribute Task task) {
         User client = userService.selectUserById(id).get();
         task.setExecutor(client);
+        task.setStatus(Status.PENDING);
         taskService.saveTask(task);
         return "redirect:/admin/client/" + id;
     }

@@ -57,8 +57,9 @@ public class AuthController {
             List<User> clients = userService.getAllClients();
             model.addAttribute("clients", clients);
         } else {
-            String username = authentication.getName();
-            List<Task> tasks = taskService.getTasksByAssignedTo(10);
+            Integer id = userService.selectUserByEmail(authentication.getName()).getId();
+            System.out.println(id);
+            List<Task> tasks = taskService.getTasksByAssignedTo(id);
             model.addAttribute("tasks", tasks);
         }
 
