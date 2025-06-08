@@ -47,4 +47,37 @@ public class AdminController {
         return "redirect:/admin/client/" + id;
     }
 
+    @GetMapping("/admin/client/{clientId}/task/{taskId}/edit")
+    public String showEditTaskForm(@PathVariable int clientId,
+                                   @PathVariable int taskId,
+                                   Model model) {
+        Task task = taskService.getTaskById(taskId).orElseThrow();
+        model.addAttribute("task", task);
+        model.addAttribute("clientId", clientId);
+        return "edit-task"; // Thymeleaf template to be created
+    }
+
+    @PostMapping("/admin/client/{clientId}/task/{taskId}/edit")
+    public String editTask(@PathVariable int clientId,
+                           @PathVariable int taskId,
+                           @ModelAttribute Task task) {
+        Task existing = taskService.getTaskById(taskId).orElseThrow();
+
+        existing.setTitle(task.getTitle());
+        existing.setDescription(task.getDescription());
+        existing.setDueDate(task.getDueDate());
+        existing.setStatus(task.getStatus());
+
+        taskService.updateTask(existing);
+        return "redirect:/admin/client/" + clientId;
+    }
+
+    @PostMapping("/admin/client/{clientId}/task/{taskId}/delete")
+    public String deleteTask(@PathVariable int clientId,
+                             @PathVariable int taskId) {
+        taskService.deleteTask(taskId);
+        return "redirect:/admin/client/" + clientId;
+    }
+
+
 }

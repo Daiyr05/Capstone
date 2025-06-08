@@ -32,14 +32,20 @@
 <div sec:authorize="!hasAuthority('ADMIN')">
     <h2 class="text-3xl font-bold mb-6">Your Tasks</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div th:each="task : ${tasks}"
-             class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition-shadow duration-300">
+        <div th:each="task : ${tasks}" class="bg-white rounded-lg shadow-md p-6">
             <h3 class="text-xl font-semibold mb-2" th:text="${task.title}">Task Title</h3>
-            <p class="text-gray-600 mb-1">Status: <span th:text="${task.status}">Pending</span></p>
-            <p class="text-gray-500 text-sm">Due: <span th:text="${#dates.format(task.dueDate, 'yyyy-MM-dd')}">2025-01-01</span></p>
+            <p th:text="${task.description}"></p>
+            <p class="text-gray-500 text-sm">Due: <span th:text="${#dates.format(task.dueDate, 'yyyy-MM-dd')}"></span></p>
+            <p class="text-gray-600 text-sm">Status: <span th:text="${task.status}"></span></p>
+
+            <!-- Link to update status -->
+            <a th:href="@{/client/task/{id}(id=${task.id})}"
+               class="text-blue-600 hover:underline text-sm">Change Status</a>
         </div>
     </div>
 </div>
+
+
 
 </body>
 </html>

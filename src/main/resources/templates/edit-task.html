@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Task</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 p-8">
+
+<h2 class="text-2xl font-bold mb-4">Edit Task</h2>
+
+<form th:action="@{/admin/client/{clientId}/task/{taskId}/edit(clientId=${clientId}, taskId=${task.id})}"
+      th:object="${task}" method="post" class="bg-white p-6 rounded shadow-md max-w-md">
+
+    <div class="mb-4">
+        <label class="block font-semibold">Title:</label>
+        <input type="text" th:field="*{title}" class="w-full border px-2 py-1 rounded" />
+    </div>
+
+    <div class="mb-4">
+        <label class="block font-semibold">Description:</label>
+        <textarea th:field="*{description}" class="w-full border px-2 py-1 rounded"></textarea>
+    </div>
+
+    <div class="mb-4">
+        <label class="block font-semibold">Due Date:</label>
+        <input type="date" th:field="*{dueDate}" class="w-full border px-2 py-1 rounded" />
+    </div>
+
+    <div class="mb-4">
+        <label class="block font-semibold">Status:</label>
+        <select th:field="*{status}" class="w-full border px-2 py-1 rounded">
+            <option th:value="INREVIEW">INREVIEW</option>
+            <option th:value="IN_PROGRESS">IN_PROGRESS</option>
+            <option th:value="FINISHED">FINISHED</option>
+            <option th:value="REJECTED">REJECTED</option>
+            <option th:value="PENDING">PENDING</option>
+        </select>
+    </div>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
+</form>
+
+</body>
+</html>
